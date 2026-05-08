@@ -248,9 +248,9 @@ public class EcommerceTest {
         driver.findElements(By.className("form-input")).get(3).sendKeys("10001"); // Postal Code
         driver.findElements(By.className("form-input")).get(4).sendKeys("USA"); // Country
         
-        // Submit order using JavascriptExecutor to avoid element interception issues
+        // Submit order
         WebElement placeOrderBtn = driver.findElement(By.xpath("//button[contains(text(), 'Place Order')]"));
-        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", placeOrderBtn);
+        placeOrderBtn.click();
         
         // Verify success message
         WebElement successMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Order Placed Successfully!')]")));
