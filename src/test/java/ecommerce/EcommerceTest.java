@@ -22,7 +22,7 @@ public class EcommerceTest {
     private WebDriverWait wait;
     
     // Update BASE_URL if the app runs on a different host/port in CI pipeline
-    private final String BASE_URL = "http://18.232.60.204:3000/";
+    private final String BASE_URL = "http://18.232.60.204:3000";
 
     @BeforeAll
     static void setupClass() {
@@ -135,7 +135,7 @@ public class EcommerceTest {
         
         // Wait for redirect to home page and verify user is logged in
         WebElement welcomeMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[contains(text(), 'Welcome back')]")));
-        assertTrue(welcomeMsg.getText().contains("Demo User")); // API returns 'Demo User' on dummy login
+        assertTrue(welcomeMsg.getText().contains("Test User")); // User was registered as 'Test User' in previous test
     }
 
     @Test
