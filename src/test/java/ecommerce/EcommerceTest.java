@@ -248,9 +248,9 @@ public class EcommerceTest {
         driver.findElements(By.className("form-input")).get(3).sendKeys("10001"); // Postal Code
         driver.findElements(By.className("form-input")).get(4).sendKeys("USA"); // Country
         
-        // Submit order
-        WebElement placeOrderBtn = driver.findElement(By.xpath("//button[contains(text(), 'Place Order')]"));
-        placeOrderBtn.click();
+        // Submit order by pressing ENTER on the last input inside the form
+        // This guarantees React's onSubmit triggers, avoiding issues with buttons placed outside the <form> DOM element
+        driver.findElements(By.className("form-input")).get(4).sendKeys(Keys.ENTER);
         
         // Verify success message
         WebElement successMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Order Placed Successfully!')]")));
