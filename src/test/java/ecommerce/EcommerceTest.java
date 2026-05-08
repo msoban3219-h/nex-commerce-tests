@@ -23,6 +23,9 @@ public class EcommerceTest {
     
     // Update BASE_URL if the app runs on a different host/port in CI pipeline
     private final String BASE_URL = "http://18.232.60.204:3000";
+    
+    // Use a unique email for each test run to avoid "User already exists" errors
+    private static final String TEST_EMAIL = "test" + System.currentTimeMillis() + "@example.com";
 
     @BeforeAll
     static void setupClass() {
@@ -112,7 +115,7 @@ public class EcommerceTest {
         driver.get(BASE_URL + "/signup");
         
         driver.findElement(By.id("name")).sendKeys("Test User");
-        driver.findElement(By.id("email")).sendKeys("test@example.com");
+        driver.findElement(By.id("email")).sendKeys(TEST_EMAIL);
         driver.findElement(By.id("password")).sendKeys("password123");
         
         driver.findElement(By.xpath("//button[@type='submit']")).click();
@@ -128,7 +131,7 @@ public class EcommerceTest {
     void testUserLogin() {
         driver.get(BASE_URL + "/login");
         
-        driver.findElement(By.id("email")).sendKeys("test@example.com");
+        driver.findElement(By.id("email")).sendKeys(TEST_EMAIL);
         driver.findElement(By.id("password")).sendKeys("password123");
         
         driver.findElement(By.xpath("//button[@type='submit']")).click();
@@ -245,9 +248,9 @@ public class EcommerceTest {
         driver.findElements(By.className("form-input")).get(3).sendKeys("10001"); // Postal Code
         driver.findElements(By.className("form-input")).get(4).sendKeys("USA"); // Country
         
-        // Submit order
+        // Submit order using JavascriptExecutor to avoid element interception issues
         WebElement placeOrderBtn = driver.findElement(By.xpath("//button[contains(text(), 'Place Order')]"));
-        placeOrderBtn.click();
+        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", placeOrderBtn);
         
         // Verify success message
         WebElement successMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Order Placed Successfully!')]")));
@@ -293,7 +296,7 @@ public class EcommerceTest {
     private void loginDummyUser() {
         driver.get(BASE_URL + "/login");
         WebElement emailInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
-        emailInput.sendKeys("test@example.com");
+        emailInput.sendKeys(TEST_EMAIL);
         driver.findElement(By.id("password")).sendKeys("password123");
         driver.findElement(By.xpath("//button[@type='submit']")).click();
         wait.until(ExpectedConditions.urlToBe(BASE_URL + "/"));
