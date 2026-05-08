@@ -241,21 +241,33 @@ public class EcommerceTest {
         WebElement proceedBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(), 'Proceed to Checkout')]")));
         proceedBtn.click();
         
-        // Fill Shipping Details
+        // Fill Shipping Details using robust relative XPath locators
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h3[contains(text(), 'Shipping Address')]")));
-        driver.findElements(By.className("form-input")).get(0).sendKeys("John Doe"); // Full Name
-        driver.findElements(By.className("form-input")).get(1).sendKeys("123 Test St"); // Address
-        driver.findElements(By.className("form-input")).get(2).sendKeys("New York"); // City
-        driver.findElements(By.className("form-input")).get(3).sendKeys("10001"); // Postal Code
-        driver.findElements(By.className("form-input")).get(4).sendKeys("USA"); // Country
+        driver.findElement(By.xpath("//label[text()='Full Name']/following-sibling::input")).sendKeys("John Doe");
+        driver.findElement(By.xpath("//label[text()='Address']/following-sibling::input")).sendKeys("123 Test St");
+        driver.findElement(By.xpath("//label[text()='City']/following-sibling::input")).sendKeys("New York");
+        driver.findElement(By.xpath("//label[text()='Postal Code']/following-sibling::input")).sendKeys("10001");
+        
+        WebElement countryInput = driver.findElement(By.xpath("//label[text()='Country']/following-sibling::input"));
+        countryInput.sendKeys("USA");
         
         // Submit order by pressing ENTER on the last input inside the form
         // This guarantees React's onSubmit triggers, avoiding issues with buttons placed outside the <form> DOM element
-        driver.findElements(By.className("form-input")).get(4).sendKeys(Keys.ENTER);
+        countryInput.sendKeys(Keys.ENTER);
         
         // Verify success message
-        WebElement successMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Order Placed Successfully!')]")));
-        assertTrue(successMsg.isDisplayed());
+        try {
+            WebElement successMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Order Placed Successfully!')]")));
+            assertTrue(successMsg.isDisplayed());
+        } catch (org.openqa.selenium.TimeoutException e) {
+            // If it times out, check if there's an error message displayed on the page to provide better debugging info
+            try {
+                WebElement errorMsg = driver.findElement(By.xpath("//div[contains(@style, 'rgba(239, 68, 68')]"));
+                fail("Checkout failed with error message on screen: " + errorMsg.getText());
+            } catch (org.openqa.selenium.NoSuchElementException ex) {
+                throw e; // Throw original timeout if no error message is found
+            }
+        }
     }
 
     @Test
