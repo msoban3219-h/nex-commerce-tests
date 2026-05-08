@@ -22,7 +22,7 @@ public class EcommerceTest {
     private WebDriverWait wait;
     
     // Update BASE_URL if the app runs on a different host/port in CI pipeline
-    private final String BASE_URL = "http://localhost:3000";
+    private final String BASE_URL = "http://18.232.60.204:3000/";
 
     @BeforeAll
     static void setupClass() {
